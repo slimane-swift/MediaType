@@ -22,19 +22,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+@_exported import InterchangeData
+
 enum MediaTypeError: ErrorType {
     case MalformedMediaTypeString
 }
 
-public struct MediaType: CustomStringConvertible {
+public class MediaType: CustomStringConvertible {
     public let type: String
     public let subtype: String
     public let parameters: [String: String]
+    public let parser: InterchangeDataParser?
+    public let serializer: InterchangeDataSerializer?
 
-    public init(type: String, subtype: String, parameters: [String: String] = [:]) {
+    public init(type: String, subtype: String, parameters: [String: String] = [:], parser: InterchangeDataParser? = nil, serializer: InterchangeDataSerializer? = nil) {
         self.type = type
         self.subtype = subtype
         self.parameters = parameters
+        self.parser = parser
+        self.serializer = serializer
     }
 
     public var description: String {
@@ -47,7 +53,7 @@ public struct MediaType: CustomStringConvertible {
         return string
     }
 
-    public init(string: String) {
+    public convenience init(string: String) throws {
         let mediaTypeTokens = string.split(";")
 
         let mediaType = mediaTypeTokens.first!
@@ -69,9 +75,11 @@ public struct MediaType: CustomStringConvertible {
 
         let tokens = mediaType.split("/")
 
-        self.type = tokens[0].lowercaseString
-        self.subtype = tokens[1].lowercaseString
-        self.parameters = parameters
+        self.init(
+            type: tokens[0].lowercaseString,
+            subtype: tokens[1].lowercaseString,
+            parameters: parameters
+        )
     }
 
     public func matches(mediaType: MediaType) -> Bool {
@@ -137,11 +145,6 @@ extension String {
         return self[startIndex ..< startIndex.advancedBy(characters.count - end)]
     }
 }
-
-public let JSONMediaType = MediaType(type: "application", subtype: "json", parameters: ["charset": "utf-8"])
-public let XMLMediaType = MediaType(type: "application", subtype: "xml", parameters: ["charset": "utf-8"])
-public let URLEncodedFormMediaType = MediaType(type: "application", subtype: "x-www-form-urlencoded")
-public let multipartFormMediaType = MediaType(type: "multipart", subtype: "form-data")
 
 let fileExtensionMediaTypeMapping: [String: String] = [
 	"ez": "application/andrew-inset",
@@ -689,8 +692,8 @@ let fileExtensionMediaTypeMapping: [String: String] = [
 
 
 public func mediaTypeForFileExtension(fileExtension: String) -> MediaType? {
-	guard let mime = fileExtensionMediaTypeMapping[fileExtension] else {
+	guard let mediaType = fileExtensionMediaTypeMapping[fileExtension] else {
 		return nil
 	}
-	return MediaType(string: mime)
+	return try? MediaType(string: mediaType)
 }
