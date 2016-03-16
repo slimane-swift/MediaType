@@ -24,7 +24,7 @@
 
 @_exported import InterchangeData
 
-enum MediaTypeError: ErrorType {
+enum MediaTypeError: ErrorProtocol {
     case MalformedMediaTypeString
 }
 
@@ -76,8 +76,8 @@ public class MediaType: CustomStringConvertible {
         let tokens = mediaType.split("/")
 
         self.init(
-            type: tokens[0].lowercaseString,
-            subtype: tokens[1].lowercaseString,
+            type: tokens[0].lowercased(),
+            subtype: tokens[1].lowercased(),
             parameters: parameters
         )
     }
@@ -110,8 +110,8 @@ public func ==(lhs: MediaType, rhs: MediaType) -> Bool {
 }
 
 extension String {
-    func split(separator: Character, allowEmptySlices: Bool = false) -> [String] {
-        return characters.split(separator, allowEmptySlices: allowEmptySlices).map(String.init)
+    func split(separator: Character, omittingEmptySubsequences: Bool = false) -> [String] {
+        return characters.split(separator: separator, omittingEmptySubsequences: omittingEmptySubsequences).map(String.init)
     }
 
     func trim() -> String {
@@ -122,27 +122,27 @@ extension String {
     func trimLeft() -> String {
         var start = characters.count
 
-        for (index, character) in characters.enumerate() {
+        for (index, character) in characters.enumerated() {
             if ![" ", "\t", "\r", "\n"].contains(character) {
                 start = index
                 break
             }
         }
 
-        return self[startIndex.advancedBy(start) ..< endIndex]
+        return self[startIndex.advanced(by: start) ..< endIndex]
     }
 
     func trimRight() -> String {
         var end = characters.count
 
-        for (index, character) in characters.reverse().enumerate() {
+        for (index, character) in characters.reversed().enumerated() {
             if ![" ", "\t", "\r", "\n"].contains(character) {
                 end = index
                 break
             }
         }
 
-        return self[startIndex ..< startIndex.advancedBy(characters.count - end)]
+        return self[startIndex ..< startIndex.advanced(by: characters.count - end)]
     }
 }
 
