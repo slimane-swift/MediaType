@@ -23,6 +23,7 @@
 // SOFTWARE.
 
 @_exported import InterchangeData
+@_exported import String
 
 enum MediaTypeError: ErrorProtocol {
     case MalformedMediaTypeString
@@ -107,43 +108,6 @@ extension MediaType: Hashable {
 
 public func ==(lhs: MediaType, rhs: MediaType) -> Bool {
     return lhs.type == rhs.type && lhs.subtype == rhs.subtype
-}
-
-extension String {
-    func split(separator: Character, omittingEmptySubsequences: Bool = false) -> [String] {
-        return characters.split(separator: separator, omittingEmptySubsequences: omittingEmptySubsequences).map(String.init)
-    }
-
-    func trim() -> String {
-        let string = trimLeft()
-        return string.trimRight()
-    }
-
-    func trimLeft() -> String {
-        var start = characters.count
-
-        for (index, character) in characters.enumerated() {
-            if ![" ", "\t", "\r", "\n"].contains(character) {
-                start = index
-                break
-            }
-        }
-
-        return self[startIndex.advanced(by: start) ..< endIndex]
-    }
-
-    func trimRight() -> String {
-        var end = characters.count
-
-        for (index, character) in characters.reversed().enumerated() {
-            if ![" ", "\t", "\r", "\n"].contains(character) {
-                end = index
-                break
-            }
-        }
-
-        return self[startIndex ..< startIndex.advanced(by: characters.count - end)]
-    }
 }
 
 let fileExtensionMediaTypeMapping: [String: String] = [
