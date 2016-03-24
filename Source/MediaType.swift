@@ -25,7 +25,7 @@
 @_exported import InterchangeData
 
 enum MediaTypeError: ErrorProtocol {
-    case MalformedMediaTypeString
+    case malformedMediaTypeString
 }
 
 public class MediaType: CustomStringConvertible {
