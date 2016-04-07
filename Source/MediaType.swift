@@ -22,7 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-@_exported import InterchangeData
+@_exported import StructuredData
 
 enum MediaTypeError: ErrorProtocol {
     case malformedMediaTypeString
@@ -32,10 +32,10 @@ public class MediaType: CustomStringConvertible {
     public let type: String
     public let subtype: String
     public let parameters: [String: String]
-    public let parser: InterchangeDataParser?
-    public let serializer: InterchangeDataSerializer?
+    public let parser: StructuredDataParser?
+    public let serializer: StructuredDataSerializer?
 
-    public init(type: String, subtype: String, parameters: [String: String] = [:], parser: InterchangeDataParser? = nil, serializer: InterchangeDataSerializer? = nil) {
+    public init(type: String, subtype: String, parameters: [String: String] = [:], parser: StructuredDataParser? = nil, serializer: StructuredDataSerializer? = nil) {
         self.type = type
         self.subtype = subtype
         self.parameters = parameters
