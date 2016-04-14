@@ -55,16 +55,16 @@ public class MediaType: CustomStringConvertible {
     }
 
     public convenience init(string: String) throws {
-        let mediaTypeTokens = string.split(by: ";")
+        let mediaTypeTokens = string.split(separator: ";")
 
         let mediaType = mediaTypeTokens.first!
         var parameters: [String: String] = [:]
 
         if mediaTypeTokens.count == 2 {
-            let parametersTokens = mediaTypeTokens[1].trim().split(by: " ")
+            let parametersTokens = mediaTypeTokens[1].trim().split(separator: " ")
 
             for parametersToken in parametersTokens {
-                let parameterTokens = parametersToken.split(by: "=")
+                let parameterTokens = parametersToken.split(separator: "=")
 
                 if parameterTokens.count == 2 {
                     let key = parameterTokens[0]
@@ -74,7 +74,7 @@ public class MediaType: CustomStringConvertible {
             }
         }
 
-        let tokens = mediaType.split(by: "/")
+        let tokens = mediaType.split(separator: "/")
 
         self.init(
             type: tokens[0].lowercased(),
