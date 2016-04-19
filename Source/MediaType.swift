@@ -22,6 +22,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+@_exported import String
 @_exported import StructuredData
 
 enum MediaTypeError: ErrorProtocol {
@@ -54,16 +55,16 @@ public class MediaType: CustomStringConvertible {
     }
 
     public convenience init(string: String) throws {
-        let mediaTypeTokens = string.split(";")
+        let mediaTypeTokens = string.split(separator: ";")
 
         let mediaType = mediaTypeTokens.first!
         var parameters: [String: String] = [:]
 
         if mediaTypeTokens.count == 2 {
-            let parametersTokens = mediaTypeTokens[1].trim().split(" ")
+            let parametersTokens = mediaTypeTokens[1].trim().split(separator: " ")
 
             for parametersToken in parametersTokens {
-                let parameterTokens = parametersToken.split("=")
+                let parameterTokens = parametersToken.split(separator: "=")
 
                 if parameterTokens.count == 2 {
                     let key = parameterTokens[0]
@@ -73,7 +74,7 @@ public class MediaType: CustomStringConvertible {
             }
         }
 
-        let tokens = mediaType.split("/")
+        let tokens = mediaType.split(separator: "/")
 
         self.init(
             type: tokens[0].lowercased(),
@@ -82,7 +83,7 @@ public class MediaType: CustomStringConvertible {
         )
     }
 
-    public func matches(mediaType: MediaType) -> Bool {
+    public func matches(other mediaType: MediaType) -> Bool {
         if type == "*" || mediaType.type == "*" {
             return true
         }
@@ -107,43 +108,6 @@ extension MediaType: Hashable {
 
 public func ==(lhs: MediaType, rhs: MediaType) -> Bool {
     return lhs.type == rhs.type && lhs.subtype == rhs.subtype
-}
-
-extension String {
-    func split(separator: Character, omittingEmptySubsequences: Bool = false) -> [String] {
-        return characters.split(separator: separator, omittingEmptySubsequences: omittingEmptySubsequences).map(String.init)
-    }
-
-    func trim() -> String {
-        let string = trimLeft()
-        return string.trimRight()
-    }
-
-    func trimLeft() -> String {
-        var start = characters.count
-
-        for (index, character) in characters.enumerated() {
-            if ![" ", "\t", "\r", "\n"].contains(character) {
-                start = index
-                break
-            }
-        }
-
-        return self[startIndex.advanced(by: start) ..< endIndex]
-    }
-
-    func trimRight() -> String {
-        var end = characters.count
-
-        for (index, character) in characters.reversed().enumerated() {
-            if ![" ", "\t", "\r", "\n"].contains(character) {
-                end = index
-                break
-            }
-        }
-
-        return self[startIndex ..< startIndex.advanced(by: characters.count - end)]
-    }
 }
 
 let fileExtensionMediaTypeMapping: [String: String] = [
@@ -691,7 +655,7 @@ let fileExtensionMediaTypeMapping: [String: String] = [
 ]
 
 
-public func mediaTypeForFileExtension(fileExtension: String) -> MediaType? {
+public func mediaType(forFileExtension fileExtension: String) -> MediaType? {
 	guard let mediaType = fileExtensionMediaTypeMapping[fileExtension] else {
 		return nil
 	}
