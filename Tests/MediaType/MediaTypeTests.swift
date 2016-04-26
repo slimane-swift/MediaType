@@ -8,7 +8,7 @@ class MediaTypeTests: XCTestCase {
 }
 
 extension MediaTypeTests {
-    static var allTests : [(String, MediaTypeTests -> () throws -> Void)] {
+    static var allTests: [(String, MediaTypeTests -> () throws -> Void)] {
         return [
            ("testReality", testReality),
         ]
