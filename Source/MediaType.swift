@@ -23,23 +23,7 @@
 // SOFTWARE.
 
 @_exported import String
-import C7
-
-public typealias StructuredData = C7.StructuredData
-
-public protocol StructuredDataParser {
-    func parse(_ data: Data) throws -> StructuredData
-}
-
-public extension StructuredDataParser {
-    public func parse(_ convertible: DataConvertible) throws -> StructuredData {
-        return try parse(convertible.data)
-    }
-}
-
-public protocol StructuredDataSerializer {
-    func serialize(_ structuredData: StructuredData) throws -> Data
-}
+@_exported import StructuredData
 
 enum MediaTypeError: ErrorProtocol {
     case malformedMediaTypeString
