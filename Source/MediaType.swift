@@ -25,23 +25,25 @@
 @_exported import String
 @_exported import StructuredData
 
+public protocol MediaTypeRepresentor {
+    static var mediaType: MediaType { get }
+    static var parser: StructuredDataParser { get }
+    static var serializer: StructuredDataSerializer { get }
+}
+
 enum MediaTypeError: ErrorProtocol {
     case malformedMediaTypeString
 }
 
-public class MediaType: CustomStringConvertible {
+public struct MediaType: CustomStringConvertible {
     public let type: String
     public let subtype: String
     public let parameters: [String: String]
-    public let parser: StructuredDataParser?
-    public let serializer: StructuredDataSerializer?
 
-    public init(type: String, subtype: String, parameters: [String: String] = [:], parser: StructuredDataParser? = nil, serializer: StructuredDataSerializer? = nil) {
+    public init(type: String, subtype: String, parameters: [String: String] = [:]) {
         self.type = type
         self.subtype = subtype
         self.parameters = parameters
-        self.parser = parser
-        self.serializer = serializer
     }
 
     public var description: String {
@@ -54,7 +56,7 @@ public class MediaType: CustomStringConvertible {
         return string
     }
 
-    public convenience init(string: String) throws {
+    public init(string: String) throws {
         let mediaTypeTokens = string.split(separator: ";")
 
         let mediaType = mediaTypeTokens.first!
@@ -96,6 +98,17 @@ public class MediaType: CustomStringConvertible {
             return subtype == mediaType.subtype
         }
 
+        return false
+    }
+}
+
+extension Collection where Self.Iterator.Element == MediaType {
+    public func matches(other mediaType: MediaType) -> Bool {
+        for type in self {
+            if type.matches(other: mediaType) {
+                return true
+            }
+        }
         return false
     }
 }
