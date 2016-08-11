@@ -1,5 +1,5 @@
 import XCTest
-@testable import MediaType
+@testable import MediaTypeTests
 
 class MediaTypeTests: XCTestCase {
     func testReality() {
